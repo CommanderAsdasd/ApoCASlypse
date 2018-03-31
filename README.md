@@ -17,3 +17,7 @@ Sometimes can crash on black frames or something. I'm gonna fix it once, but you
 # Todo
 
 linux init script, installer
+
+# Example of work
+
+https://vk.com/video233359632_456239116
