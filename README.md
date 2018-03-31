@@ -2,9 +2,19 @@
 
 # Installation
 
+Install
+[Python](https://www.python.org/download/releases/3.0/), then [pip](https://pip.pypa.io/en/stable/installing/)
+
+unpack zip file, win+R, enter "cmd". In terminal window enter this ($INSTALL_DIR is folder where zip file unpacked):
+
+``` 
+
+cd "$INSTALL_DIR"
+
 virtualenv venv
 
 pip install -r requirements.txt
+```
 
 # using
 
