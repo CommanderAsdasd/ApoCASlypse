@@ -1,4 +1,4 @@
-![Logo.jpg](https://sun9-2.userapi.com/c834101/v834101843/106474/we4cM7M6Kvc.jpg)
+![Logo.jpg](https://sun9-4.userapi.com/c834101/v834101669/fe6e1/zxKC3izyAIY.jpg)
 
 # Installation
 
