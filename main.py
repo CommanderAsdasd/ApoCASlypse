@@ -11,14 +11,26 @@ import time
 import argparse
 import tkFileDialog
 from moviepy.editor import *
+from PIL import ImageDraw
 from random import choice
 from Tkinter import *
 
 class VideoProcess():
 
-    def __init__():
-        pass
+    def __init__(self):
+        self.Clip = None
+        # self.clipPath = None
 
+    def make_dummy(self):
+        blob = io.BytesIO()
+        width = self.Clip.w
+        height = self.Clip.h
+        image = PILImage.new("RGB", (width, height), (0,0,0,0))
+        draw = ImageDraw.Draw(image)
+        draw.ellipse((10,10,300,300), fill="red", outline="red")
+        del draw
+        image.save(blob, format='JPEG')
+        return image
 
     def rescaler(self, img):
         blob = io.BytesIO()
@@ -56,21 +68,21 @@ class VideoProcess():
             imarray = imarray.reshape((img.size[1], img.size[0], 3))
         except ValueError as err:
             print(str(err))
+            img = self.make_dummy()
+            imarray = np.fromstring(img.tobytes(), dtype=np.uint8)
+            imarray = imarray.reshape((img.size[1], img.size[0], 3))
             # print(imarray)
             # imarray = 0
-            pass
         return imarray
 
 
-    def main(self, videoClip):
+    def main(self):
         write_data = time.strftime("%I%M%S")
-        x = MpEditor.VideoFileClip(videoClip)
-        # x = x.subclip(0.05, x.duration)
-        x = x.fl_image(self.image_adaptor)
-        # x = x.resize( (1920, 1080) )
-        out_string = str(videoClip).rsplit(".")[0] + "__CAS-{}".format(write_data) + ".mp4"
+        self.Clip = MpEditor.VideoFileClip(self.clipPath)
+        self.Clip = self.Clip.fl_image(self.image_adaptor)
+        out_string = str(self.clipPath).rsplit(".")[0] + "__CAS-{}".format(write_data) + ".mp4"
         print(out_string)
-        x.write_videofile(out_string, codec='libx264', audio_codec='aac')
+        self.Clip.write_videofile(out_string, codec='libx264', audio_codec='aac')
 
 
 
@@ -80,6 +92,7 @@ class GUI(VideoProcess):
     def __init__(self):
         self.lowerBound = None
         self.lowerBound = None
+        VideoProcess.__init__(self)
         self.main_window()
 
     def Entry1_Callback(self, event):
@@ -95,15 +108,15 @@ class GUI(VideoProcess):
             self.lowerBound = int(min(self.insert_bound1.get(), self.insert_bound2.get()))
             self.upperBound = int(max(self.insert_bound1.get(), self.insert_bound2.get()))
         except ValueError:
-            print('Non integer range input, use default')
+            print('Non integer range input, use default 4 and 5')
             self.insert_bound1.delete(0, 'end')
             self.insert_bound1.insert(END, '4')
             self.insert_bound2.delete(0, 'end')
             self.insert_bound2.insert(END, '5')
             self.lowerBound = int(min(self.insert_bound1.get(), self.insert_bound2.get()))
             self.upperBound = int(max(self.insert_bound1.get(), self.insert_bound2.get()))
-        input_file = self.entry.get()
-        self.main(input_file)
+        self.clipPath = self.entry.get()
+        self.main()
 
 
     def button_browse_callback(self):
