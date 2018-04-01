@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
 # /venv/Scripts/Python.exe
 import moviepy.editor as MpEditor
-import wand as wnd
 import wand.image as WndImage
-import StringIO
 import PIL.Image as PILImage
+import wand as wnd
+import StringIO
 import io
-from random import choice
 import numpy as np
 import time
-from moviepy.editor import *
 import argparse
 import tkFileDialog
+from moviepy.editor import *
+from random import choice
 from Tkinter import *
 
 countFrom = 0
@@ -78,12 +78,12 @@ def gui():
     inc_label(message)
     mainloop()
 
-def wand_opener(img):
+def rescaler(img):
     blob = io.BytesIO()
     with WndImage.Image(blob=img) as img:
         img.format = 'jpeg'
         print('width =', img.width)
-        print('height =', img.height) 
+        print('height =', img.height)
         size = img.size
         coef_x = choice((2,3,4,5))
         coef_y = choice((2,3,4,5))
@@ -103,17 +103,14 @@ def wand_opener(img):
     return blob
 
 
-def show_me_type(imarray):
+def image_adaptor(imarray):
     blob = io.BytesIO()
     inpImage = PILImage.fromarray(imarray, 'RGB')
-    print(inpImage.size)
     inpImage.save(blob, format='JPEG')
-    print(blob)
-    blob2 = wand_opener(blob.getvalue())
+    blob2 = rescaler(blob.getvalue())
     blob2.seek(0)
     img = PILImage.open(blob2)
     imarray = np.fromstring(img.tobytes(), dtype=np.uint8)
-    print(imarray)
     imarray = imarray.reshape((img.size[1], img.size[0], 3))
     return imarray
 
@@ -121,11 +118,11 @@ def show_me_type(imarray):
 def main(videoClip):
     x = MpEditor.VideoFileClip(videoClip)
     # x = x.subclip(0.05, x.duration)
-    x = x.fl_image(show_me_type)
+    x = x.fl_image(image_adaptor)
     x = x.resize( (1920, 1080) )
     out_string = str(videoClip).rsplit(".")[0] + "__time-{}".format(write_data) + ".mp4"
     print(out_string)
-    x.write_videofile(out_string,  fps=60)
+    x.write_videofile(out_string,  fps=60, codec='libx264', audio_codec='aac')
 
 if __name__ == "__main__":
     gui()
