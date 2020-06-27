@@ -1,19 +1,22 @@
+#!/usr/bin/env pipenv-shebang
 # -*- coding: utf-8 -*-
-# /venv/Scripts/Python.exe
 import moviepy.editor as MpEditor
 import wand.image as WndImage
 import PIL.Image as PILImage
 import wand as wnd
-import StringIO
+# import io
 import io
 import numpy as np
 import time
 import argparse
-import tkFileDialog
+# import tkFileDialog
+from tkinter import filedialog
+from tkinter import *
 from moviepy.editor import *
 from PIL import ImageDraw
 from random import choice
-from Tkinter import *
+import os
+# from Tkinter import *
 
 class VideoProcess():
 
@@ -52,11 +55,18 @@ class VideoProcess():
             img.sample(size[0], size[1])
             print(size[0], size[1])
             img_bin = img.make_blob('jpeg')
-            blob = io.BytesIO(b'{}'.format(img_bin))
+            blob = io.BytesIO(img_bin)
+            # blob = io.BytesIO(b'{}'.format(img_bin))
         return blob
 
 
     def image_adaptor(self, imarray):
+        # magick_home=os.getcwd() + os.sep + 
+        # magick_home = "C:\Program Files\ImageMagick-7.0.9-Q16"
+        # os.environ["PATH"] += os.pathsep + magick_home + os.sep
+        # os.environ["MAGICK_HOME"] = magick_home
+        # os.environ["MAGICK_CODER_MODULE_PATH"] = magick_home + os.sep + "modules" + os.sep + "coders"
+        print(os.environ["MAGICK_CODER_MODULE_PATH"])
         blob = io.BytesIO()
         inpImage = PILImage.fromarray(imarray, 'RGB')
         inpImage.save(blob, format='JPEG')
@@ -79,6 +89,7 @@ class VideoProcess():
     def main(self):
         write_data = time.strftime("%I%M%S")
         self.Clip = MpEditor.VideoFileClip(self.clipPath)
+        breakpoint
         self.Clip = self.Clip.fl_image(self.image_adaptor)
         out_string = str(self.clipPath).rsplit(".")[0] + "__CAS-{}".format(write_data) + ".mp4"
         print(out_string)
@@ -121,7 +132,7 @@ class GUI(VideoProcess):
 
     def button_browse_callback(self):
         """ What to do when the Browse button is pressed """
-        filename = tkFileDialog.askopenfilename()
+        filename = filedialog.askopenfilename()
         self.entry.delete(0, END)
         self.entry.insert(0, filename)
 
